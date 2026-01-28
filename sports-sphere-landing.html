@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Sphere - Volleyball Tournament Management | No Login Required</title>
+    <meta name="description" content="Create and manage volleyball tournaments without any login. Free, simple, fast. Live scoring, shareable links, automatic standings. Start in 60 seconds!">
+    <meta name="keywords" content="volleyball, tournament, management, free, no login, live scoring">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF3366;
+            --secondary: #00D9FF;
+            --accent: #FFD700;
+            --dark: #0A0E27;
+            --darker: #050714;
+            --light: #F5F7FA;
+            --text-dark: #0A0E27;
+            --text-light: #F5F7FA;
+            --border-light: rgba(255, 255, 255, 0.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, #0f1535 100%);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', 'Arial Black', sans-serif;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            margin-bottom: 1rem;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(5, 7, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--primary), #FF1744);
+            color: white !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            nav {
+                padding: 1rem;
+            }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: 10%;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--secondary);
+            top: 40%;
+            right: -150px;
+            animation-delay: 5s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 10%;
+            opacity: 0.2;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            33% {
+                transform: translate(50px, -50px);
+            }
+            66% {
+                transform: translate(-30px, 30px);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            font-size: clamp(2.8rem, 10vw, 5rem);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: rgba(245, 247, 250, 0.85);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            color: rgba(245, 247, 250, 0.8);
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Work Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #FF1744);
+            color: white;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(255, 51, 102, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 217, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.2);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(245, 247, 250, 0.7);
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 100px 1.5rem 2rem;
+            }
+            .trust-badges {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .cta-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 80px 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* PROBLEMS SECTION */
+        .problems {
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.5) 0%, rgba(15, 21, 53, 0.5) 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .problem-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1) 0%, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .problem-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .problem-card:hover::before {
+            opacity: 1;
+        }
+
+        .problem-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+        }
+
+        .problem-card p {
+            font-size: 0.95rem;
+            color: rgba(245, 247, 250, 0.8);
+            line-height: 1.6;
+        }
+
+        /* SOLUTION SECTION */
+        .solution {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, transparent);
+        }
+
+        .solution h2 {
+            text-align: center;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .solution-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(245, 247, 250, 0.8);
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            border-color: var(--secondary);
+            background: rgba(0, 217, 255, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: var(--secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: rgba(245, 247, 250, 0.75);
+            line-height: 1.6;
+        }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.5) 0%, rgba(15, 21, 53, 0.5) 100%);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step-card {
+            position: relative;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            counter-increment: step-counter;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .step-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .step-time {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .step-card p {
+            font-size: 0.9rem;
+            color: rgba(245, 247, 250, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .step-list {
+            font-size: 0.85rem;
+            color: rgba(245, 247, 250, 0.75);
+        }
+
+        .step-list li {
+            margin-bottom: 0.5rem;
+            margin-left: 1.5rem;
+        }
+
+        .step-list strong {
+            color: var(--secondary);
+        }
+
+        /* USE CASES */
+        .use-cases {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, transparent);
+        }
+
+        .use-cases h2 {
+            text-align: center;
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .persona-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .persona-card:hover {
+            border-color: var(--accent);
+            background: rgba(255, 215, 0, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .persona-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .persona-card h3 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-card p {
+            font-size: 0.9rem;
+            color: rgba(245, 247, 250, 0.75);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .persona-example {
+            font-size: 0.8rem;
+            color: rgba(245, 247, 250, 0.6);
+            font-style: italic;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* SOCIAL PROOF */
+        .social-proof {
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.5) 0%, rgba(15, 21, 53, 0.5) 100%);
+        }
+
+        .stats-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .big-stat {
+            padding: 2rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .big-stat:nth-child(2) {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .big-stat:nth-child(3) {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .big-stat:nth-child(4) {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: rgba(255, 51, 102, 0.3);
+        }
+
+        .big-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .testimonial-card:nth-child(2) {
+            border-left-color: var(--secondary);
+        }
+
+        .testimonial-card:nth-child(3) {
+            border-left-color: var(--accent);
+        }
+
+        .testimonial-quote {
+            font-size: 0.95rem;
+            color: rgba(245, 247, 250, 0.9);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+
+        .testimonial-role {
+            font-size: 0.8rem;
+            color: rgba(245, 247, 250, 0.6);
+            margin-top: 0.25rem;
+        }
+
+        /* COMPARISON */
+        .comparison {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, transparent);
+        }
+
+        .comparison h2 {
+            text-align: center;
+        }
+
+        .comparison-table {
+            overflow-x: auto;
+            margin-top: 3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--light);
+        }
+
+        td {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        th:nth-child(1), td:nth-child(1) {
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        th:nth-child(2) {
+            color: var(--secondary);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .check {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .cross {
+            color: #f87171;
+        }
+
+        /* FAQ */
+        .faq {
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.5) 0%, rgba(15, 21, 53, 0.5) 100%);
+        }
+
+        .faq h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--secondary);
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 1.5rem;
+            transition: all 0.3s ease;
+            color: rgba(245, 247, 250, 0.8);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* CTA SECTION */
+        .cta-final {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF1744 50%, var(--secondary) 100%);
+            text-align: center;
+            padding: 80px 2rem;
+        }
+
+        .cta-final h2 {
+            color: white;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .cta-final p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-final .btn {
+            margin: 0 0.5rem;
+        }
+
+        .cta-final .btn-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-final .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .cta-reassurance {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--darker);
+            border-top: 1px solid var(--border-light);
+            padding: 4rem 2rem 2rem;
+            color: rgba(245, 247, 250, 0.7);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h4 {
+            color: var(--light);
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column a {
+            color: rgba(245, 247, 250, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-light);
+            padding-top: 2rem;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--secondary);
+            transform: scale(1.2);
+        }
+
+        /* FLOATING ACTION BUTTON */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), #FF1744);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+            animation: fabPulse 2s infinite;
+        }
+
+        @keyframes fabPulse {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 60px rgba(255, 51, 102, 0.6);
+            }
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .fab {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            section {
+                padding: 60px 1.5rem;
+            }
+            table {
+                font-size: 0.8rem;
+            }
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+
+        /* SCROLL ANIMATIONS */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .hero-stats {
+                gap: 2rem;
+            }
+            section {
+                padding: 60px 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">🏐 Sports Sphere</div>
+        <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#cta" class="nav-cta">Get Started</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Manage Volleyball Tournaments Without Any Login</h1>
+            <p class="hero-subtitle">No registration. No OTP. Just your mobile number. Start organizing professional tournaments in 60 seconds.</p>
+            
+            <div class="trust-badges">
+                <div class="badge">✓ No Credit Card Required</div>
+                <div class="badge">✓ No Login Needed</div>
+                <div class="badge">✓ 100% Free Forever</div>
+            </div>
+
+            <div class="cta-group">
+                <button class="btn btn-primary">Start Your Tournament Free →</button>
+                <button class="btn btn-secondary">Watch 2-Min Demo</button>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Tournaments Created</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Players Registered</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100K+</div>
+                    <div class="stat-label">Live Views</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEMS SECTION -->
+    <section class="problems">
+        <div class="section-title">
+            <h2>Tired of Complex Tournament Management?</h2>
+        </div>
+        <div class="problems-grid">
+            <div class="problem-card scroll-animate">
+                <h3>📝 Registration Hassles</h3>
+                <p>Other platforms force lengthy registration and multiple verification steps that waste your time.</p>
+            </div>
+            <div class="problem-card scroll-animate">
+                <h3>💰 Expensive Solutions</h3>
+                <p>Paying $50-200/month for basic features with hidden costs and upgrade traps.</p>
+            </div>
+            <div class="problem-card scroll-animate">
+                <h3>🔐 Login Barriers</h3>
+                <p>Teams can't view scores without accounts. OTP verification delays access for everyone.</p>
+            </div>
+            <div class="problem-card scroll-animate">
+                <h3>📊 Manual Scorekeeping</h3>
+                <p>Excel sheets and paper forms. No live updates for viewers watching matches.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION SECTION -->
+    <section class="solution" id="features">
+        <h2>Introducing Sports Sphere</h2>
+        <p class="solution-subtitle">Tournament management made ridiculously simple</p>
+        <div class="features-grid">
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🚀</span>
+                <h3>No Login Required</h3>
+                <p>Just enter name + mobile number. Start creating instantly. No OTP, no verification.</p>
+            </div>
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🏆</span>
+                <h3>Complete Management</h3>
+                <p>Create unlimited tournaments. Add teams and players. Schedule matches. Track standings.</p>
+            </div>
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">⚡</span>
+                <h3>Live Score Tracking</h3>
+                <p>Set-by-set scoring, point attribution to players, real-time updates, automatic statistics.</p>
+            </div>
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🔗</span>
+                <h3>Shareable Links</h3>
+                <p>Unique access codes per tournament. Match-specific viewer links. Share via WhatsApp instantly.</p>
+            </div>
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">📊</span>
+                <h3>Statistics & Standings</h3>
+                <p>Player performance metrics, team rankings, match history, downloadable reports.</p>
+            </div>
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">💰</span>
+                <h3>100% Free</h3>
+                <p>No subscription fees. No hidden costs. No credit card needed. All features unlocked.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-title">
+            <h2>Start in 3 Simple Steps</h2>
+            <p style="text-align: center; color: rgba(245, 247, 250, 0.8); font-size: 1.1rem; margin-bottom: 2rem;">From zero to tournament in 3 minutes!</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card scroll-animate">
+                <div class="step-number">1</div>
+                <span class="step-icon">📱</span>
+                <h3>Enter Details</h3>
+                <span class="step-time">15 seconds</span>
+                <ul class="step-list">
+                    <li><strong>Enter</strong> your name</li>
+                    <li><strong>Enter</strong> mobile number</li>
+                    <li><strong>Click</strong> "Start"</li>
+                </ul>
+            </div>
+            <div class="step-card scroll-animate">
+                <div class="step-number">2</div>
+                <span class="step-icon">🏆</span>
+                <h3>Create Tournament</h3>
+                <span class="step-time">2 minutes</span>
+                <ul class="step-list">
+                    <li><strong>Add</strong> tournament details</li>
+                    <li><strong>Add</strong> teams & players</li>
+                    <li><strong>Schedule</strong> matches</li>
+                    <li><strong>Get</strong> access code</li>
+                </ul>
+            </div>
+            <div class="step-card scroll-animate">
+                <div class="step-number">3</div>
+                <span class="step-icon">🎯</span>
+                <h3>Share & Score</h3>
+                <span class="step-time">Live!</span>
+                <ul class="step-list">
+                    <li><strong>Share</strong> access code</li>
+                    <li><strong>Track</strong> live scores</li>
+                    <li><strong>View</strong> real-time standings</li>
+                    <li><strong>Celebrate</strong> winners!</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- USE CASES -->
+    <section class="use-cases">
+        <div class="section-title">
+            <h2>Perfect For Every Volleyball Organizer</h2>
+        </div>
+        <div class="personas-grid">
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">🏫</span>
+                <h3>Schools & Colleges</h3>
+                <p>Sports day tournaments, inter-house competitions, PE tracking</p>
+                <div class="persona-example">"St. Mary's School runs 5 tournaments yearly"</div>
+            </div>
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">🏘️</span>
+                <h3>Community Centers</h3>
+                <p>Neighborhood leagues, weekend tournaments, social volleyball events</p>
+                <div class="persona-example">"Sunrise Community hosts monthly matches"</div>
+            </div>
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">🏢</span>
+                <h3>Corporate Teams</h3>
+                <p>Office tournaments, team building events, inter-department matches</p>
+                <div class="persona-example">"Tech Corp connects 200+ employees"</div>
+            </div>
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">🏋️</span>
+                <h3>Sports Clubs</h3>
+                <p>Training match tracking, practice sessions, player development</p>
+                <div class="persona-example">"Elite Volleyball Club manages 50+ players"</div>
+            </div>
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">🎉</span>
+                <h3>Event Organizers</h3>
+                <p>Festival tournaments, charity events, exhibition matches</p>
+                <div class="persona-example">"City Fest organized 3-day championship"</div>
+            </div>
+            <div class="persona-card scroll-animate">
+                <span class="persona-icon">👨‍🏫</span>
+                <h3>Coaches</h3>
+                <p>Team performance tracking, player statistics, training progress</p>
+                <div class="persona-example">"Coach Kumar improved team by 40%"</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <section class="social-proof">
+        <div class="section-title">
+            <h2>Trusted by Thousands</h2>
+        </div>
+        <div class="stats-showcase">
+            <div class="big-stat scroll-animate">
+                <div class="big-number">500+</div>
+                <p>Tournaments Created</p>
+            </div>
+            <div class="big-stat scroll-animate">
+                <div class="big-number">10K+</div>
+                <p>Matches Played</p>
+            </div>
+            <div class="big-stat scroll-animate">
+                <div class="big-number">50K+</div>
+                <p>Players Registered</p>
+            </div>
+            <div class="big-stat scroll-animate">
+                <div class="big-number">100K+</div>
+                <p>Live Views</p>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2>What Users Are Saying</h2>
+        </div>
+        <div class="testimonials">
+            <div class="testimonial-card scroll-animate">
+                <p class="testimonial-quote">"Sports Sphere made our school tournament so easy! No technical knowledge needed. Everyone could access scores instantly."</p>
+                <div class="testimonial-author">Priya Singh</div>
+                <div class="testimonial-role">PE Teacher, Delhi Public School</div>
+            </div>
+            <div class="testimonial-card scroll-animate">
+                <p class="testimonial-quote">"We run community tournaments every weekend. This platform is a game-changer! Live scoring impressed everyone, and sharing via WhatsApp was perfect."</p>
+                <div class="testimonial-author">Rajesh Kumar</div>
+                <div class="testimonial-role">Community Center Manager</div>
+            </div>
+            <div class="testimonial-card scroll-animate">
+                <p class="testimonial-quote">"Finally, a free tool that actually works! The interface is intuitive, and players loved being able to see real-time statistics."</p>
+                <div class="testimonial-author">Michael Chen</div>
+                <div class="testimonial-role">Sports Club Owner</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section class="comparison">
+        <h2>Why Sports Sphere Wins</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Sports Sphere</th>
+                        <th>Competitor A</th>
+                        <th>Competitor B</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>No Login Required</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="cross">❌ No</td>
+                        <td class="cross">❌ No</td>
+                    </tr>
+                    <tr>
+                        <td>Price</td>
+                        <td class="check">✅ Free</td>
+                        <td class="cross">❌ $50/mo</td>
+                        <td class="cross">❌ $99/mo</td>
+                    </tr>
+                    <tr>
+                        <td>Setup Time</td>
+                        <td class="check">✅ 3 min</td>
+                        <td>⏱️ 30 min</td>
+                        <td>⏱️ 1 hour</td>
+                    </tr>
+                    <tr>
+                        <td>Live Scoring</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                        <td>⚠️ Paid add-on</td>
+                    </tr>
+                    <tr>
+                        <td>Shareable Links</td>
+                        <td class="check">✅ Yes</td>
+                        <td>⚠️ Limited</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Player Statistics</td>
+                        <td class="check">✅ Yes</td>
+                        <td>⚠️ Basic</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile Optimized</td>
+                        <td class="check">✅ Yes</td>
+                        <td>⚠️ Partial</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Unlimited Tournaments</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="cross">❌ 5/month</td>
+                        <td class="cross">❌ 10/month</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is it really free?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! 100% free forever. No credit card, no hidden fees, no premium tiers. We believe in making sports accessible to everyone.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Why no login required?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We believe in simplicity. Your mobile number is your identity. No passwords to forget, no verification delays. Get started in 60 seconds.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can viewers access without login?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! Share tournament/match codes via WhatsApp. Anyone can view scores and standings without any account or verification.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How many tournaments can I create?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Unlimited! Create as many tournaments as you need, with as many teams and matches as you want. No restrictions whatsoever.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is my data secure?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! We use industry-standard security practices. Your data is protected with encryption and stored securely on our servers.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What sports are supported?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Currently we support volleyball. Cricket, football, basketball, and more are coming soon! We're building the ultimate multi-sport platform.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do I need technical knowledge?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>None! If you can use WhatsApp, you can use Sports Sphere. Our interface is designed to be intuitive and easy for everyone.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I use it on mobile?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! Fully responsive design works perfectly on all devices - phones, tablets, and desktops. Optimized for mobile-first experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="cta-final" id="cta">
+        <h2>Ready to Simplify Your Tournament?</h2>
+        <p>Join hundreds of organizers already using Sports Sphere to manage their tournaments</p>
+        <div class="cta-group" style="justify-content: center; margin-bottom: 2rem;">
+            <button class="btn btn-primary" style="background: white; color: #FF3366;">Create Your First Tournament →</button>
+            <button class="btn btn-secondary" style="border-color: white; color: white;">Download User Guide</button>
+        </div>
+        <div class="cta-reassurance">
+            <span>✓ No credit card required</span>
+            <span>✓ No installation needed</span>
+            <span>✓ Start in 60 seconds</span>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Tech Eagles</a></li>
+                    <li><a href="#">Mahakumbrix Innovation</a></li>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#">Pricing (Free!)</a></li>
+                    <li><a href="#">Roadmap</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">User Guide</a></li>
+                    <li><a href="#">Video Tutorials</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Disclaimer</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div style="flex: 1;">
+                © 2026 Sports Sphere - Tech Eagles | Mahakumbrix Innovation
+                <br><span style="font-size: 0.9rem;">Made with ❤️ for Sports Enthusiasts</span>
+            </div>
+            <div class="social-links">
+                <a href="#" title="Facebook">f</a>
+                <a href="#" title="Twitter">𝕏</a>
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="LinkedIn">in</a>
+                <a href="#" title="YouTube">▶</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING ACTION BUTTON -->
+    <button class="fab" title="Create Tournament">
+        🏐
+    </button>
+
+    <script>
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(other => {
+                    if (other !== item) other.classList.remove('active');
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
+
+        // CTA Buttons
+        document.querySelectorAll('.btn-primary, .fab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('🚀 Tournament creation feature would open here!\n\nThis is a landing page template. In production, this would navigate to your app.');
+            });
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.textContent);
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        }
+
+        // Trigger counter on scroll
+        const statsObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const numbers = entry.target.querySelectorAll('.big-number, .stat-number');
+                    numbers.forEach(num => animateCounter(num));
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        document.querySelectorAll('.stats-showcase, .hero-stats').forEach(el => {
+            statsObserver.observe(el);
+        });
+    </script>
+</body>
+</html>
